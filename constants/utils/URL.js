@@ -76,17 +76,17 @@
 
 
 export const backend_URL = "https://www.bconnectbiz.com"
-export const reg_URL = "https://www.bconnectbiz.com/auth/signup"
-export const login_URL = "https://www.bconnectbiz.com/auth/login"
+export const reg_URL = "https://vendor.hungercat.com/api-register"
+export const login_URL = "https://vendor.hungercat.com/api-login"
 export const validatepin_URL = "https://www.bconnectbiz.com/auth/validate-pin"
 export const favoriteItemPost_URL = "https://www.bconnectbiz.com/api/favorites"
 export const resetPassword_URL = "https://www.bconnectbiz.com/api/reset-password"
 
 
 export const getBrands_URL = "https://www.bconnectbiz.com/api/brands"
-export const getCategories_URL = "https://www.bconnectbiz.com/api/categories"
-export const getAllProducts_URL = "https://www.bconnectbiz.com/api/products/getAllProducts"
-export const getProductsById = 'https://www.bconnectbiz.com/api/products/getProductById'
+export const getCategories_URL = "https://vendor.hungercat.com/api-homepage"
+export const getAllProducts_URL = "https://vendor.hungercat.com/api-homepage"
+export const getProductsById = 'https://vendor.hungercat.com/api-product/view'
 export const getUserOrders_URL = "https://www.bconnectbiz.com/api/orders/buyAgainOrderList"
 export const getAllUserOrders_URL = 'https://www.bconnectbiz.com/api/orders/userOrders'
 
@@ -117,3 +117,5 @@ export const updateUserDetails = 'https://www.bconnectbiz.com/auth/updateUser'
 export const getUserDetails = 'https://www.bconnectbiz.com/auth/getUserDetails'
 export const imageUpload = 'https://www.bconnectbiz.com/api/products/imageUpload'
 export const imageUpload64 = 'https://www.bconnectbiz.com/api/products/imageUpload64' 
+
+export const fetchVendorsList='https://vendor.hungercat.com/api-get-vendor'

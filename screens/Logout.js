@@ -5,8 +5,8 @@ const Logout=({navigation})=>{
     useEffect(() => {
         const logout = async () => {
           // Remove the value stored in AsyncStorage
-          await AsyncStorage.removeItem('userId');
-          await AsyncStorage.removeItem('username');
+          await AsyncStorage.removeItem('token');
+          await AsyncStorage.removeItem('vendorid');
           
           // Redirect to the Login screen
           navigation.replace('Login');

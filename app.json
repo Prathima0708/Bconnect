@@ -9,7 +9,7 @@
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#016A70"
+      "backgroundColor": "#FFFFFF"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -21,7 +21,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#016A70"
+        "backgroundColor": "#FFFFFF"
       },
       "intentFilters": [
         {
@@ -64,7 +64,8 @@
       ]
     ],
     "extra": {
-      "eas": { 
+      "eas": {
+        "projectId": "1e61ffb0-0794-402f-8a55-aa496a8fdf47"
       }
     }
   }

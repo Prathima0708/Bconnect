@@ -18,10 +18,12 @@ import { StatusBar } from 'expo-status-bar'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { MaterialIcons } from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient'
-import { login_URL, reg_URL } from '../constants/utils/URL'
+import { fetchVendorsList, login_URL, reg_URL } from '../constants/utils/URL'
 import { FONTS, icons } from '../constants'
 import axios from 'axios'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { Dropdown } from 'react-native-element-dropdown'
+import { StyleSheet } from 'react-native'
 
 const isTestMode = true
 
@@ -48,6 +50,10 @@ const initialState = {
 const Signup = ({ navigation }) => {
     const [error, setError] = useState()
     const [isLoading, setIsLoading] = useState(false)
+    const [vendors, setVendors] = useState([]);
+  const [selectedVendor, setSelectedVendor] = useState('');
+  const [selectedVendorId, setSelectedVendorId] = useState('');
+  const [loading, setLoading] = useState(true);
     const [formState, dispatchFormState] = useReducer(reducer, initialState)
     const [formData, setFormData] = useState({
         fullName: '',
@@ -56,6 +62,11 @@ const Signup = ({ navigation }) => {
         phone: '',
         address: '',
         passwordConfirm: '',
+        country:'',
+        city:'',
+        state:'',
+        pincode:'',
+        gst:''
     })
     const [formErrors, setFormErrors] = useState({
         email: '',
@@ -66,233 +77,115 @@ const Signup = ({ navigation }) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
         return emailRegex.test(email)
     }
-    // const inputChangedHandler = useCallback(
-    //     (inputId, inputValue) => {
-    //         const result = validateInput(inputId, inputValue)
-    //         dispatchFormState({ inputId, validationResult: result, inputValue })
-    //     },
-    //     [dispatchFormState]
-    // )
+  
 
     const inputChangedHandler = (id, value) => {
         setFormData((prevFormData) => ({
             ...prevFormData,
             [id]: value,
         }))
-        // if (id === 'email') {
-        //     const isValid = validateEmail(value);
-        //     setFormErrors((prevFormErrors) => ({
-        //       ...prevFormErrors,
-        //       [id]: isValid ? '' : 'Invalid email format',
-        //     }));
-        //   }
+      
     }
 
-    // useEffect(() => {
-    //   setFormData({
-    //     fullName: '',
-    //     email: '',
-    //     password: '',
-    //     passwordConfirm:''
-    //   })
-    //     if (error) {
-    //         Alert.alert('An error occured', error)
-    //     }
-    // }, [error])
+    useEffect(() => {
+        // Fetch data from the API
+        fetch(`${fetchVendorsList}`)
+          .then(response => response.json())
+          .then(data => {
+            // Check if data is an object and contains the 'data' property
+            if (data && data.data && Array.isArray(data.data)) {
+                // Extract names and IDs from the response and set them to the state
+                const vendorData = data.data.map(vendor => ({
+                  id: vendor.id,
+                  name: vendor.name
+                }));
+                setVendors(vendorData);
+              }  else {
+              console.error('Invalid data format:', data);
+            }
+          })
+          .catch(error => console.error('Error fetching data:', error))
+          .finally(() => setLoading(false));
+      }, []);
+      const handleVendorChange = (selectedValue) => {
+        const selectedVendorName = selectedValue.value; // Extracting the name from the selected value object
+        setSelectedVendor(selectedVendorName);
+        
+        // Find the selected vendor object
+        const selectedVendorObject = vendors.find(vendor => vendor.name === selectedVendorName);
+        console.log('Selected Vendor Object:', selectedVendorObject);
+        
+        // Retrieve the ID if the vendor object exists
+        const selectedId = selectedVendorObject ? selectedVendorObject.id : undefined;
+        console.log('Selected Vendor ID:', selectedId);
+        
+        // Set the selected vendor ID
+        setSelectedVendorId(selectedId);
+    };
+    
+    
+    
+    
+    
 
-    // const onSubmit = async () => {
-    //     try {
-    //         setIsLoading(true)
-    //         if (formData.password !== formData.passwordConfirm) {
-    //           alert('Passwords do not match');
-    //         }
-
-    //         const response = await fetch(`${reg_URL}`, {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //             },
-    //             body: JSON.stringify({
-    //                 fullName: formData.fullName,
-    //                 email: formData.email,
-    //                 password: formData.password,
-    //             }),
-    //         })
-
-    //         if (response.ok) {
-    //             const responseData = await response.json()
-    //             console.log('API response:', responseData)
-    //             // Handle successful signup, e.g., navigate to the login screen
-    //             navigation.navigate('Login')
-    //             setFormData({
-    //               fullName: '',
-    //               email: '',
-    //               password: '',
-    //             })
-    //         } else {
-    //             throw new Error('Signup failed')
-    //         }
-    //     } catch (error) {
-    //         console.error('Error during signup:', error)
-    //         // Handle error, e.g., display an error message to the user
-    //     } finally {
-    //         setIsLoading(false)
-    //     }
-    // }
-
-    const onSubmit = async () => {
-        //   try {
-        //     setIsLoading(true);
-
-        //     if (!formData.fullName || !formData.email || !formData.password || !formData.passwordConfirm) {
-        //         alert('Please fill in all fields');
-        //         return
-        //       }
-
-        //     // Check if passwords match
-        //     if (formData.password !== formData.passwordConfirm) {
-        //       throw new Error('Passwords do not match');
-        //     }
-
-        //     const response = await fetch(`${reg_URL}`, {
-        //       method: 'POST',
-        //       headers: {
-        //         'Content-Type': 'application/json',
-        //       },
-        //       body: JSON.stringify({
-        //         name: formData.fullName,
-        //         email: formData.email,
-        //         password: formData.password,
-        //       }),
-        //     });
-
-        //     const responseData = await response.json();
-        //     console.log('API response:', responseData);
-        //     Alert.alert('Success', responseData.status, [
-        //       { text: 'OK', onPress: () => navigation.navigate('Verification',{email:formData.email}) },
-        //     ]);
-
-        //     // if (response.ok) {
-        //     //   const responseData = await response.json();
-        //     //   console.log('API response:', responseData);
-        //     //   Alert.alert('Success', responseData.status, [
-        //     //     { text: 'OK', onPress: () => navigation.navigate('Verification',{email:formData.email}) },
-        //     //   ]);
-        //     //  // navigation.navigate('Verification');
-        //     // }
-        //     // else {
-        //     //   throw new Error('Signup failed');
-        //     // }
-        //   } catch (error) {
-        //     console.error('Error during signup:', error);
-
-        //     // Show an alert to the user when passwords do not match
-        //     // if (error.message === 'Passwords do not match') {
-        //     //   alert('Passwords do not match', 'Passwords do not match');
-        //     // } else {
-        //     //   // Handle other errors or display a general error message
-        //     //   alert('Error', 'Signup failed. Please try again.');
-        //     // }
-        //   } finally {
-        //     setIsLoading(false);
-        //   }
-
+      const onSubmit = async () => {
         try {
             setIsLoading(true)
-          //  alert('alert 1')
-            if (
-                !formData.fullName ||
-                !formData.email ||
-                !formData.password ||
-                !formData.passwordConfirm
-            ) {
-                alert('Please fill in all fields')
-                return
-            }
-          //  alert('alert 2')
-            // Check if passwords match
             if (formData.password !== formData.passwordConfirm) {
-                throw new Error('Passwords do not match')
+                alert('Passwords do not match');
+                return; // Return early if passwords do not match
             }
-          //  alert('alert 3')
-            const request_body = {
-                name: formData.fullName,
-                email: formData.email,
-                password: formData.password,
+            const data = new FormData()
+            data.append('name', formData.fullName)
+            data.append('customer', selectedVendorId)
+            data.append('mobile', formData.phone)
+            data.append('email', formData.email)
+            data.append('token', 10001)
+            data.append('password', formData.password)
+            data.append('retype_password', formData.passwordConfirm)
+            data.append('city', formData.city)
+            data.append('pincode', formData.pincode)
+            data.append('gst_no', formData.gst)
+            data.append('country', formData.country)
+            data.append('state', formData.state)
+          console.log('signup data',data)
+
+            const response = await fetch(`${reg_URL}`, {
+                method: 'POST',
+                body: data,
+            });
+    
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to register');
             }
-            let headers = {
-                'Content-Type': 'application/json; charset=utf-8',
-            }
-            const response = await axios.post(`${reg_URL}`, request_body, {
-                headers: headers,
-            })
-          //  alert('alert 4')
-            console.log('API response:', response.data)
-            try {
-                await AsyncStorage.setItem("username", formData.fullName);
-              } catch (error) {}
-            Alert.alert('Success', response.data.status, [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        // Check if the email is already in use
-                        if (response.data.status !== 'Email is already in use') {
-                          // Clear the formData state
-                
-                          // Navigate to 'Verification' screen with email data
-                          navigation.navigate('Verification', {
-                            email: formData.email,
-                            pin: response.data.pin
-                          });
-                        }
+    
+            const responseData = await response.json();
+            console.log('Response:', responseData); // Log response here
+           
+            if (responseData.status === 200) {
+                setvendorId()
+                Alert.alert(responseData.message, 'Registered Successfully', [
+                    {
+                        text: 'OK',
+                        onPress: () => navigation.navigate("Login")
                     }
-                },
-            ])
-            setFormData({
-                fullName: '',
-                email: '',
-                password: '',
-                passwordConfirm: '',
-            })
+                ]);
+            } else {
+                Alert.alert(responseData.message);
+            }
         } catch (error) {
-            alert('something went wrong', error)
-            console.log('Error during signup:', error)
+            console.error('Error during signin:', error)
+            // Handle error, e.g., display an error message to the user
         } finally {
             setIsLoading(false)
         }
     }
+    
+    const setvendorId=async()=>{
+        await AsyncStorage.setItem('vendorid', selectedVendorId);
+    }
 
-    // const onSubmit=()=>{
-    //     Linking.openURL('http://www.google.com')
-    // }
-
-    // const onSubmit = async () => {
-    //     try {
-    //       const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
-    //         method: 'POST',
-    //         headers: {
-    //           'Content-Type': 'application/json',
-    //         },
-    //         body: JSON.stringify({
-    //           title: 'foo',
-    //           body: 'bar',
-    //           userId: 1,
-    //         }),
-    //       });
-      
-    //       if (!response.ok) {
-    //         throw new Error(`HTTP error! Status: ${response.status}`);
-    //       }
-      
-    //       const data = await response.json();
-    //       console.log('Post created:', data);
-    //       navigation.navigate('Main');
-    //       // Perform any further actions with the data here
-      
-    //     } catch (error) {
-    //       console.error('Error making POST request:', error.message);
-    //     }
-    //   };
       
 
     return (
@@ -386,63 +279,78 @@ const Signup = ({ navigation }) => {
                         placeholder="Address"
                         placeholderTextColor={COLORS.black}
                     /> 
-                    {/* <Text style={commonStyles.inputHeader}>Company Name</Text>
+                    <Text style={commonStyles.inputHeader}>Country</Text>
                     <Input
-                        id="companyName"
+                        id="country"
+                        value={formData.country}
                         onInputChanged={inputChangedHandler}
-                        errorText={formState.inputValidities['companyName']}
-                        placeholder="CowboyIceCream"
+                        errorText={formState.inputValidities['country']}
+                        placeholder="India"
                         placeholderTextColor={COLORS.black}
                     />
-                     <Text style={commonStyles.inputHeader}>Address Line 1</Text>
-                    <Input
-                        id="address1"
-                        onInputChanged={inputChangedHandler}
-                        errorText={formState.inputValidities['address1']}
-                        placeholder="Manipal"
-                        placeholderTextColor={COLORS.black}
-                    />
+                   
                      
                      <Text style={commonStyles.inputHeader}>City</Text>
                     <Input
                         id="city"
+                        value={formData.city}
                         onInputChanged={inputChangedHandler}
                         errorText={formState.inputValidities['city']}
                         placeholder="Manipal"
                         placeholderTextColor={COLORS.black}
                     />
-                     <Text style={commonStyles.inputHeader}>Taluk</Text>
-                    <Input
-                        id="taluk"
-                        onInputChanged={inputChangedHandler}
-                        errorText={formState.inputValidities['taluk']}
-                        placeholder="Udupi"
-                        placeholderTextColor={COLORS.black}
-                    />
-                     <Text style={commonStyles.inputHeader}>District</Text>
-                    <Input
-                        id="district"
-                        onInputChanged={inputChangedHandler}
-                        errorText={formState.inputValidities['district']}
-                        placeholder="Udupi"
-                        placeholderTextColor={COLORS.black}
-                    />
+                   
                     <Text style={commonStyles.inputHeader}>State</Text>
                     <Input
                         id="state"
+                        value={formData.state}
                         onInputChanged={inputChangedHandler}
                         errorText={formState.inputValidities['state']}
                         placeholder="Karnataka"
                         placeholderTextColor={COLORS.black}
                     />
+      
+         <View style={{ }}>
+                            <Dropdown
+                                search
+                                style={styles.dropdown}
+                                placeholderStyle={styles.placeholderStyle}
+                                selectedTextStyle={styles.selectedTextStyle}
+                                inputSearchStyle={styles.inputSearchStyle}
+                                iconStyle={styles.iconStyle}
+                                data={vendors.map(vendor => ({ value: vendor.name }))}
+                                maxHeight={300}
+                                labelField="value"
+                                valueField="value"
+                                placeholder="Select vendor"
+                                searchPlaceholder="Search..."
+                                value={selectedVendor}
+                                onChange={(itemValue) => handleVendorChange(itemValue)}
+                                
+                               
+                             
+                            />
+
+                        </View>
                      <Text style={commonStyles.inputHeader}>Pincode</Text>
                     <Input
                         id="pincode"
+                        value={formData.pincode}
                         onInputChanged={inputChangedHandler}
                         errorText={formState.inputValidities['pincode']}
                         placeholder="576104"
                         placeholderTextColor={COLORS.black}
-                    /> */}
+                    />
+                       <Text style={commonStyles.inputHeader}>GST No</Text>
+                    <Input
+                        id="gst"
+                        value={formData.gst}
+                        onInputChanged={inputChangedHandler}
+                        errorText={formState.inputValidities['gst']}
+                        placeholder="GST"
+                        placeholderTextColor={COLORS.black}
+                    />
+       
                     <Button
                         title="SIGN UP"
                         isLoading={isLoading}
@@ -470,3 +378,21 @@ const Signup = ({ navigation }) => {
 }
 
 export default Signup
+
+const styles=StyleSheet.create({
+    dropdown: {
+        margin: 16,
+        height: 50,
+        borderBottomColor: 'gray',
+        borderBottomWidth: 0.5,
+    },
+    icon: {
+        marginRight: 5,
+    },
+    placeholderStyle: {
+        fontSize: 16,
+    },
+    selectedTextStyle: {
+        fontSize: 16,
+    },
+})

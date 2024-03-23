@@ -59,6 +59,7 @@ import Order from '../screens/newscreens/Order'
 import OrderList from '../screens/newscreens/OrderList'
 import LedgerScreen from '../screens/newscreens/LedgerScreen'
 import UpdatePasswordScreen from '../screens/UpdatePasswordScreen'
+import SelectVendor from '../screens/SelectVendor'
 
 const Stack = createNativeStackNavigator()
 
@@ -101,9 +102,11 @@ const AppNavigation = () => {
                 <Stack.Screen name="Onboarding2" component={Onboarding2}/>
                 <Stack.Screen name="Onboarding3" component={Onboarding3}/>
                 <Stack.Screen name="Onboarding4" component={Onboarding4}/> */}
+                   <Stack.Screen name="Login" component={Login}/>
+                   <Stack.Screen name="SelectVendor" component={SelectVendor}/>
                 <Stack.Screen name="Signup" component={Signup}/>
                 <Stack.Screen name="StartUpScreen" component={StartUpScreen}/>
-                <Stack.Screen name="Login" component={Login}/>
+                {/* <Stack.Screen name="Login" component={Login}/> */}
                 {/* <Stack.Screen name="Home" component={MainScreen}/> */}
                 <Stack.Screen name="ForgotPassword" component={ForgotPassword}/>
                 <Stack.Screen name="ResetPassword" component={ResetPassword}/>

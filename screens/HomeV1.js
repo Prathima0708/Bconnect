@@ -33,6 +33,7 @@ const HomeV1 = () => {
     const [totalOverdues, setTotalOverdues] = useState('')
     const [totalDues, setTotalDues] = useState('')
     const [modalVisible, setModalVisible] = useState(true)
+    const [vendorId,setVendorId]=useState('')
 
     const handlePressGotIt = () => {
         // Handle the logic when the "GOT IT" button is pressed
@@ -46,6 +47,10 @@ const HomeV1 = () => {
                 const userid = await AsyncStorage.getItem('userid')
                 const totalOverdues = await AsyncStorage.getItem('totalOverdues') 
                 const totalDues = await AsyncStorage.getItem('totalDues')
+                const vendorid = await AsyncStorage.getItem('vendorid')
+                if(vendorid!==null){
+                    setVendorId(vendorid)
+                }
 
                 // Check if the value is present
                 if (userid !== null) { 
@@ -144,6 +149,8 @@ const HomeV1 = () => {
                             </View>
                         </View>
                     </View>
+                    
+                   
 
                  
                 </View>
@@ -163,7 +170,7 @@ const HomeV1 = () => {
                             },
                         ]}>
                         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} >
-                            <Text style={styles.mainText}>RS. {totalDues.toLocaleString()}</Text>
+                            <Text style={styles.mainText}>RS.11 {totalDues.toLocaleString()}</Text>
                             <Text style={styles.subText}>TOTAL DUE</Text>
                         </View>
                         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} >
@@ -176,10 +183,10 @@ const HomeV1 = () => {
                             {
                                 flexDirection: 'row',
                                 marginVertical: 70,
-                                top: 110
+                               // top: 110
                             },
                         ]}>
-                        <TouchableOpacity
+                        {/* <TouchableOpacity
                             style={{
                                 flex: 1,
                                 justifyContent: 'center',
@@ -190,12 +197,31 @@ const HomeV1 = () => {
                             <View style={{ backgroundColor: '#2CAB37', paddingVertical: 10, paddingHorizontal: 40, borderRadius: 5 }}>
                                 <Text style={{ color: 'white', fontSize: 16 }}>PAY</Text>
                             </View>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                     </View>
 
                 </View>
-
-                <View  >
+                <ScrollView>
+            <View>
+                <View style={styles.row}>
+                    <Box text="Order" onPress={() => navigation.navigate("Order")} iconName="shopping" />
+                    <Box text="Buy again" iconName="cart-arrow-down" onPress={() => navigation.navigate("History")} />
+                </View>
+                <View style={styles.row}>
+                    <Box text="Order list" onPress={() => navigation.navigate("OrderList")} iconName="clipboard-list-outline" />
+                    <Box text="Cart" onPress={() => navigation.navigate('Cart')} iconName="cart-plus" />
+                </View>
+                <View style={styles.row}>
+                    <Box text="Favorites" onPress={() => navigation.navigate('Favourite')} iconName="heart-outline" />
+                    <Box text="Ledger" onPress={() => navigation.navigate('Ledger')} iconName="note-check-outline" />
+                </View>
+                <View style={styles.row}>
+                    <Box text="Payment" iconName="finance" />
+                    <Box text="Return" iconName="hand-coin" onPress={() => navigation.navigate('Orders')} />
+                </View>
+            </View>
+        </ScrollView>
+                {/* <View  >
 
 
                     <View style={styles.row}>
@@ -214,7 +240,8 @@ const HomeV1 = () => {
                         <Box text="Invoices" iconName="finance" />
                         <Box text="Return" iconName="hand-coin" onPress={() => navigation.navigate('Orders')} />
                     </View>
-                </View>
+                    
+                </View> */}
  
             </View> 
         </SafeAreaView>

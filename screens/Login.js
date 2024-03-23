@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Image } from 'react-native'
+import { View, Text, TouchableOpacity, Image, Alert } from 'react-native'
 import React, { useState, useReducer, useEffect, useCallback } from 'react'
 import { COLORS, FONTS, icons } from '../constants'
 import Checkbox from 'expo-checkbox'
@@ -12,7 +12,7 @@ import { StatusBar } from 'expo-status-bar'
 import { LinearGradient } from 'expo-linear-gradient'
 import { login_URL } from '../constants/utils/URL'
 import axios from 'axios'
-import AsyncStorage from '@react-native-async-storage/async-storage' 
+import AsyncStorage from '@react-native-async-storage/async-storage'
 const isTestMode = true
 
 const initialState = {
@@ -58,113 +58,118 @@ const Login = ({ navigation }) => {
         }
     }, [error])
 
-    async function onSubmit() {
-        const request_model = {
-            email: formData.email,
-            password: formData.password, 
-        }
-        const jsonString = JSON.stringify(request_model, null, 2) // null and 2 are optional for formatting (indentation of 2 spaces)
-        console.log(jsonString)
-        try {
-            setIsLoading(true)
-
-            let headers = {
-                'Content-Type': 'application/json; charset=utf-8',
-            }
-
-            const res = await axios.post(`${login_URL}`, request_model, {
-                headers: headers,
-            }
-            )
-
-            // const res = await axios.post(`${login_URL}`, request_model)
-
-            if (res.data) {
-                console.log('API response:', res.data)
-            } 
-            setFormData({
-
-                email: '',
-                password: '',
-
-            })
-
-            if(res.data.status==="success"){
-                navigation.navigate('LocationAccess')
-            }
-
-            else {
-            }
-            try {
-                await AsyncStorage.setItem("userid", res.data.userId);
-                await AsyncStorage.setItem("totalOverdues", res.data.totalOverdues);
-                await AsyncStorage.setItem("totalDues", res.data.totalDues);
-                await AsyncStorage.setItem("image", res.data.image);
-                await AsyncStorage.setItem("name", res.data.name);
-                console.log("QQQQQQQQQQQQQ",res.data);
-              } catch (error) {}
-        } catch (error) {
-            console.log('error')
-            alert('user not registered / incorrect passwords')
-            console.error('Error during signin:', error)
-        } finally {
-            //  navigation.navigate('LocationAccess')
-            setIsLoading(false)
-        }
- 
-        // initWithParams({
-        //     amount: 100,
-        //     receiverUpi: "8660205906@ybl",
-        //     currency: 'INR'
-        //   })
-        //     .then((result) => {
-        //      console.log('Payment successful',result)
-        //     })
-        //     .catch((e) => {
-        //       console.log('error', e);
-        //     });
-
-        
-    }
- 
-
-    // const onSubmit = async () => {
+    // async function onSubmit() {
+    //     const formDatatosend = new FormData();
+    //     formDatatosend.append('email', formData.email);
+    //     formDatatosend.append('password', formData.password);
+    //      navigation.navigate('LocationAccess')
+    //     // const request_model = {
+    //     //     email: formData.email,
+    //     //     password: formData.password,
+    //     //     //   email: "manjuojal26@gmail.com",
+    //     //     //password: "123456",
+    //     // }
+    //     // const jsonString = JSON.stringify(request_model, null, 2) // null and 2 are optional for formatting (indentation of 2 spaces)
+    //     console.log(formDatatosend)
     //     try {
     //         setIsLoading(true)
 
-    //         if (!formData.email || !formData.password) {
-    //             alert('Please fill in all fields');
-    //             return
-    //           }
-    //         const response = await fetch(`${login_URL}`, {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //             },
-    //             body: JSON.stringify({
-    //                 email: formData.email,
-    //                 password: formData.password,
-    //             }),
+    //         let headers = {
+    //             'Content-Type': 'application/json; charset=utf-8',
+    //         }
+    //         console.log('inside try',formDatatosend)
+    //         const res = await axios.post(`${login_URL}`, formDatatosend)
+
+    //         // const res = await axios.post(`${login_URL}`, request_model)
+
+    //         if (res.data) {
+    //             console.log('API response:', res.data)
+    //         }
+    //         setFormData({
+    //             email: '',
+    //             password: '',
     //         })
 
-    //         if (response.ok) {
-    //             const responseData = await response.json()
-    //             console.log('API response:', responseData)
-    //             // Handle successful signup, e.g., navigate to the login screen
+    //         if (res.data.status === 'success') {
     //             navigation.navigate('LocationAccess')
     //         } else {
-    //            // throw new Error('Signin failed')
-
     //         }
-    //         console.log(response)
-    //         navigation.navigate('LocationAccess')
+    //         try {
+    //             await AsyncStorage.setItem('userid', res.data.userId)
+    //             await AsyncStorage.setItem(
+    //                 'totalOverdues',
+    //                 res.data.totalOverdues
+    //             )
+    //             await AsyncStorage.setItem('totalDues', res.data.totalDues)
+    //             await AsyncStorage.setItem('image', res.data.image)
+    //             await AsyncStorage.setItem('name', res.data.name)
+    //             console.log('QQQQQQQQQQQQQ', res.data)
+    //         } catch (error) {}
     //     } catch (error) {
+    //         console.log('error')
+    //         alert('user not registered / incorrect passwords')
     //         console.error('Error during signin:', error)
-    //         // Handle error, e.g., display an error message to the user
     //     } finally {
+    //         //  navigation.navigate('LocationAccess')
     //         setIsLoading(false)
     //     }
+
+    //     // initWithParams({
+    //     //     amount: 100,
+    //     //     receiverUpi: "8660205906@ybl",
+    //     //     currency: 'INR'
+    //     //   })
+    //     //     .then((result) => {
+    //     //      console.log('Payment successful',result)
+    //     //     })
+    //     //     .catch((e) => {
+    //     //       console.log('error', e);
+    //     //     });
     // }
+
+    const onSubmit = async () => {
+        navigation.navigate('LocationAccess');
+
+        try {
+            setIsLoading(true);
+    
+            const data = new FormData();
+            data.append('email', formData.email);
+            data.append('password', formData.password);
+    
+            const response = await fetch(`${login_URL}`, {
+                method: 'POST',
+                body: data,
+            });
+    
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Login failed');
+            }
+    
+            const responseData = await response.json();
+    
+            if (responseData.status === 200) {
+                Alert.alert(responseData.message, '', [
+                    {
+                        text: 'OK',
+                        onPress: () => navigation.navigate('LocationAccess')
+                    }
+                ]);
+  
+                // Store token in AsyncStorage
+                await AsyncStorage.setItem('token', responseData.data[0].token);
+                await AsyncStorage.setItem('username', responseData.data[0].firstname);
+            } else {
+                Alert.alert('Error', 'Login failed');
+            }
+        } catch (error) {
+            console.error('Error during signin:', error);
+            Alert.alert('Error', 'Login failed');
+        } finally {
+            setIsLoading(false);
+        }
+    }
 
     // implementing facebook authentication
     const facebookAuthHandler = () => {
@@ -218,7 +223,6 @@ const Login = ({ navigation }) => {
                     placeholderTextColor={COLORS.black}
                     secureTextEntry={true}
                 />
-
 
                 {/* <View style={commonStyles.checkBoxContainer}>
                     <View
